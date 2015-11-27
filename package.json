@@ -1,0 +1,9 @@
+{
+  "name": "Worm",
+  "version": "0.0.1",
+  "private": false,
+  "dependencies": {
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {}
+}
