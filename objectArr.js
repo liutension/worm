@@ -1,7 +1,8 @@
 /**
- * Created by Administrator on 2015/11/26.
+ * Created by tensionliu on 2015/11/26.
  */
 var _ = require('underscore');
+var MATCH='~:';
 var data1={"list":[
     {
         "id":308799990,
@@ -69,34 +70,6 @@ var data2 = {"json":
     ]
 };
 
-var model ={
-    'pages':[],
-    'pages.row':null,
-    'pages.row.col': null,
-    'pages.row.in': null,
-    'pages.row.out': null,
-    'pages.row.bgcol': null,
-    'pages.row.bgimage': null,
-    'pages.row.bgleft': null,
-    'pages.row.bgtop': null,
-    'pages.row.cmps': [],
-    'pages.row.cmps.style':'~:list.elememts.css',
-    'pages.row.cmps.text':'~:list.elememts.content',
-    'pages.row.cmps.animations':'~:list.elememts.properties.anim',
-    'pages.row.cmps.link':null,
-    'pages.row.cmps.textType':null,
-    'pages.row.cmps.imageLink':null,
-    'pages.row.cmps.mask':false,
-    'pages.row.cmps.remark':{},
-    'pages.row.cmps.remark.key':null,
-    'pages.row.cmps.remark.name':null,
-    'pages.row.cmps.file':{},
-    'pages.row.cmps.file.key':'~:list.elememts.properties.src',
-    'pages.row.cmps.file.server':'Q',
-    'pages.row.cmps.effect':null,
-    'pages.row.cmps.cmpType':'~:list.elememts.type'
-}
-
 var pages=[
     {
     'row': null,
@@ -132,40 +105,129 @@ var pages=[
 ]
 
 function buildInstance(model){
-    var shit;
+    var shit={};
     for(var key in model){
-
+        shit = _.extend(shit,buildElement(key,model[key]));
     }
-    return shit || {};
+    return shit;
 }
 
-function aa(key,data){
+function buildElement(eleKey,eleVal){
+    if(!eleKey || !_.isString(eleKey)){
+        return {}
+    }
+    var keys = eleKey.split('.');
+    if(keys.length < 1){
+        return {};
+    }
+    return buildNodes(keys,eleVal);
+}
+
+var model ={
+    'pages':[],
+    'pages.col': null,
+    'pages.in': null,
+    'pages.out': null,
+    'pages.bgcol': null,
+    'pages.bgimage': null,
+    'pages.bgleft': null,
+    'pages.bgtop': null,
+    'pages.cmps': [],
+    'pages.cmps.style':'~:list.elememts.css',
+    'pages.cmps.text':'~:list.elememts.content',
+    'pages.cmps.animations':'~:list.elememts.properties.anim',
+    'pages.cmps.link':null,
+    'pages.cmps.textType':null,
+    'pages.cmps.imageLink':null,
+    'pages.cmps.mask':false,
+    'pages.cmps.remark':{},
+    'pages.cmps.remark.key':null,
+    'pages.cmps.remark.name':null,
+    'pages.cmps.file':{},
+    'pages.cmps.file.key':'~:list.elememts.properties.src',
+    'pages.cmps.file.server':'Q',
+    'pages.cmps.effect':null,
+    'pages.cmps.cmpType':'~:list.elememts.type'
+}
+
+function buildNodes(nodes,value){
+    var tree,seed;
+    seed = value;
+    tree = water(nodes,seed);
+};
+
+function water(nodes,seed){
+    var tree={};
+    var depth = nodes.length;
+    for(var i=0;i<depth;i++){
+        var node = nodes.pop();
+        if(i==0){
+            if(_.isString(seed) && seed.indexOf(MATCH) == 0){
+                seed = seed.substr(MATCH.length,seed.length);
+                tree = aa(seed);
+            }else{
+                tree[node] = seed;
+            }
+        }else{
+            var swap={};
+            var checkArray = beArray(node);
+            if(checkArray){
+                node = checkArray;
+                var nodeArray = [];
+                nodeArray.push(tree);
+                tree = nodeArray;
+            }
+            swap[node] = tree;
+            tree = swap;
+        }
+    }
+    return tree
+}
+console.log(JSON.stringify(water('[pages].[cmps].file.key'.split('.'),'~:list.elements.properties.imgStyle')));
+
+//如果为数据结构，则返回数据引用名
+function beArray(matchStr){
+    if(!matchStr || !matchStr.match(/\[\w+\]/g)){
+        return null
+    }
+    return matchStr.slice(1,matchStr.length-1);
+}
+function aa(key){
     if(key == null || key == ''){
         return
     }
     var elemts = key.split('.');
-    return done(elemts,data);
+    return done(elemts,data1);
+};
+function bb(key){
+    if(key == null || key == ''){
+        return
+    }
+    var elemts = key.split('.');
+    return done(elemts,data2);
 };
 
 function done(elemts,datas){
-    var root = elemts.length
+    var root = elemts.length;
     if(root<1){
-        return datas;
+        var swap ={}
+        swap['key']=datas;
+        return swap
     }
     if(_.isArray(datas)){
-        var result = []
+        var result = [];
         for(var i= 0;i<datas.length;i++)
         {
             result.push(done(elemts.slice(),datas[i]));
         }
-        return result
+        return result;
     }else if(_.isObject(datas)){
         var ele = elemts.shift();
         var value = datas[ele];
         if(value){
             var obj={};
             obj[ele]=done(elemts.slice(),value)
-            return obj
+            return done(elemts.slice(),value)
         }else {
             return null
         }
@@ -175,8 +237,9 @@ function done(elemts,datas){
 }
 
 //console.log(aa('list.elements.css',data1));
-console.log(JSON.stringify(aa('list.elements.sceneId',data1)));
-//console.log(JSON.stringify(aa('list.elements.properties.anim',data1)));
+//console.log(JSON.stringify(aa('list.elements.sceneId',data1)));
+//console.log(JSON.stringify(_.indexBy(aa('list.elements.sceneId',data1))));
+//console.log(JSON.stringify(aa('list.elements.properties.src',data1)));
 //console.log(aa('list.elements.num',data1));
 //console.log(aa('list.id',data1));
 //console.log(JSON.stringify(aa('json.elementData.imgData.cropData',data2)));
