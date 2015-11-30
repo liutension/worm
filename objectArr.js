@@ -72,7 +72,7 @@ var data2 = {"json":
 
 var pages=[
     {
-    'row': null,
+        'row': null,
         'col': null,
         'in': null,
         'out': null,
@@ -82,9 +82,9 @@ var pages=[
         'bgtop': null,
         'cmps': [
             {
-                'style':'~:list.elememts.css',
-                'text':'~:list.elememts.content',
-                'animations':'~:list.elememts.properties.anim',
+                'style':'~:list.elements.css',
+                'text':'~:list.elements.content',
+                'animations':'~:list.elements.properties.anim',
                 'link':null,
                 'textType':null,
                 'imageLink':null,
@@ -94,16 +94,24 @@ var pages=[
                     'name':null
                 },
                 'file':{
-                    'key':'~:list.elememts.properties.src',
+                    'key':'~:list.elements.properties.src',
                     'server':'Q'
                 },
                 'effect':null,
-                'cmpType':'~:list.elememts.type'
+                'cmpType':'~:list.elements.type'
             }
         ]
     }
 ]
+/**
+console.log(JSON.stringify(water('[pages].[cmps].cmpType'.split('.'),'~:list.elements.type')));
+console.log('---------------------');
+console.log(JSON.stringify(aa('list.elements.type','cmpType')));
 
+console.log(JSON.stringify(water('[pages].[cmps].file.key'.split('.'),'~:list.elements.properties.src')));
+console.log('---------------------');
+console.log(JSON.stringify(aa('list.elements.properties.src','key')));
+**/
 function buildInstance(model){
     var shit={};
     for(var key in model){
@@ -156,7 +164,88 @@ function buildNodes(nodes,value){
     tree = water(nodes,seed);
 };
 
+function grow(nodes,fruits){
+    var depth = nodes.length;
+    for(var i=0;i<depth;i++){
+        var childNode = nodes.pop();
+        var parantNode = nodes[nodes.length-1];
+        fruits = _grow(childNode,parantNode,fruits)
+        console.log(JSON.stringify(fruits))
+    }
+    return fruits
+}
+
+function _grow(childNode,parentNode,fruits){
+    if(_.isArray(fruits)){
+        var _fruits;
+        var checkNode = beArray(parentNode);
+        if(checkNode){
+            _fruits = {};
+        }else{
+            _fruits = []
+        }
+        for(var i=0;i<fruits.length;i++){
+            var _fruit;
+            var fruit=fruits[i];
+            _fruit = _grow(childNode,parentNode,fruit)
+            if(checkNode){
+                if(_.isArray(fruit)){
+                    if(!_.isArray(_fruits)){
+                        _fruits=[];
+                    }
+                    _fruits.push(_fruit);
+                }else{
+                    if(!_fruits[checkNode]){
+                        _fruits[checkNode]= [];
+                    }
+                    _fruits[checkNode].push(_fruit);
+                }
+            }else{
+                _fruits.push(_fruit);
+            }
+        }
+        return _fruits
+    }
+    if(_.isObject(fruits)){
+        var _fruit = {};
+        if(fruits[(beArray(childNode)||childNode)]){
+            if(parentNode){
+                var checkNode = beArray(parentNode);
+                if(checkNode){
+                    //_fruit[checkNode]=[];
+                    //_fruit[checkNode].push(fruits);
+                    _fruit=fruits;
+                }else {
+                    _fruit[parentNode] = fruits;
+                }
+            }else{
+                _fruit = fruits;
+            }
+        }else{
+            for(var key in fruits){
+                _fruit[key] = _grow(childNode,parentNode,fruits[key]);
+            }
+        }
+        return _fruit
+    }else{
+
+    }
+}
+water('[pages].[cmps].file.key'.split('.'),'~:list.elements.properties.src')
+
 function water(nodes,seed){
+    var fruits={};
+    if(_.isString(seed) && seed.indexOf(MATCH) == 0){
+        seed = seed.substr(MATCH.length,seed.length);
+        fruits = aa(seed,(nodes[nodes.length-1]||'key'));
+    }else{
+        fruits = seed;
+    }
+    console.log(JSON.stringify(fruits));
+    return grow(nodes,fruits);
+}
+
+function water1(nodes,seed){
     var tree={};
     var depth = nodes.length;
     for(var i=0;i<depth;i++){
@@ -183,7 +272,7 @@ function water(nodes,seed){
     }
     return tree
 }
-console.log(JSON.stringify(water('[pages].[cmps].file.key'.split('.'),'~:list.elements.properties.imgStyle')));
+
 
 //如果为数据结构，则返回数据引用名
 function beArray(matchStr){
@@ -192,12 +281,12 @@ function beArray(matchStr){
     }
     return matchStr.slice(1,matchStr.length-1);
 }
-function aa(key){
+function aa(key,keyContainer){
     if(key == null || key == ''){
         return
     }
     var elemts = key.split('.');
-    return done(elemts,data1);
+    return done(elemts,keyContainer,data1);
 };
 function bb(key){
     if(key == null || key == ''){
@@ -206,19 +295,18 @@ function bb(key){
     var elemts = key.split('.');
     return done(elemts,data2);
 };
-
-function done(elemts,datas){
+function done(elemts,key,datas){
     var root = elemts.length;
     if(root<1){
         var swap ={}
-        swap['key']=datas;
+        swap[key]=datas;
         return swap
     }
     if(_.isArray(datas)){
         var result = [];
         for(var i= 0;i<datas.length;i++)
         {
-            result.push(done(elemts.slice(),datas[i]));
+            result.push(done(elemts.slice(),key,datas[i]));
         }
         return result;
     }else if(_.isObject(datas)){
@@ -226,19 +314,22 @@ function done(elemts,datas){
         var value = datas[ele];
         if(value){
             var obj={};
-            obj[ele]=done(elemts.slice(),value)
-            return done(elemts.slice(),value)
+            obj[ele]=done(elemts.slice(),key,value)
+            return done(elemts.slice(),key,value)
         }else {
             return null
         }
     }else{
-        return [datas]
+        var aa = {}
+        aa[key] = datas
+        return aa
     }
 }
 
 //console.log(aa('list.elements.css',data1));
 //console.log(JSON.stringify(aa('list.elements.sceneId',data1)));
 //console.log(JSON.stringify(_.indexBy(aa('list.elements.sceneId',data1))));
+//console.log('-------------------------------');
 //console.log(JSON.stringify(aa('list.elements.properties.src',data1)));
 //console.log(aa('list.elements.num',data1));
 //console.log(aa('list.id',data1));
