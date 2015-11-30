@@ -103,11 +103,11 @@ var pages=[
         ]
     }
 ]
-/**
+
 console.log(JSON.stringify(water('[pages].[cmps].cmpType'.split('.'),'~:list.elements.type')));
 console.log('---------------------');
 console.log(JSON.stringify(aa('list.elements.type','cmpType')));
-
+/**
 console.log(JSON.stringify(water('[pages].[cmps].file.key'.split('.'),'~:list.elements.properties.src')));
 console.log('---------------------');
 console.log(JSON.stringify(aa('list.elements.properties.src','key')));
@@ -170,7 +170,6 @@ function grow(nodes,fruits){
         var childNode = nodes.pop();
         var parantNode = nodes[nodes.length-1];
         fruits = _grow(childNode,parantNode,fruits)
-        console.log(JSON.stringify(fruits))
     }
     return fruits
 }
@@ -231,7 +230,7 @@ function _grow(childNode,parentNode,fruits){
 
     }
 }
-water('[pages].[cmps].file.key'.split('.'),'~:list.elements.properties.src')
+//water('[pages].[cmps].file.key'.split('.'),'~:list.elements.properties.src')
 
 function water(nodes,seed){
     var fruits={};
@@ -241,7 +240,6 @@ function water(nodes,seed){
     }else{
         fruits = seed;
     }
-    console.log(JSON.stringify(fruits));
     return grow(nodes,fruits);
 }
 
