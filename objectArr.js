@@ -112,15 +112,51 @@ var pages=[
 console.log(JSON.stringify(water('[pages].[cmps].cmpType'.split('.'),'~:list.elements.type')));
 console.log('---------------------');
 console.log(JSON.stringify(aa('list.elements.type','cmpType')));
- **/
+
 console.log(JSON.stringify(water('[pages].[cmps].text'.split('.'),'~:list.elements.content')));
 console.log('---------------------');
 console.log(JSON.stringify(discover('list.elements.content','text')));
+**/
+var model ={
+    default:{
+        '[pages].col': null,
+        '[pages].in': null,
+        '[pages].out': null,
+        '[pages].bgcol': null,
+        '[pages].bgimage': null,
+        '[pages].bgleft': null,
+        '[pages].bgtop': null,
+        '[pages].[cmps].link':null,
+        '[pages].[cmps].textType':null,
+        '[pages].[cmps].imageLink':null,
+        '[pages].[cmps].mask':false,
+        //'[pages].[cmps].remark':{},
+        '[pages].[cmps].remark.key':null,
+        '[pages].[cmps].remark.name':null,
+        //'[pages].[cmps].file':{}
+        '[pages].[cmps].file.server':'Q',
+        '[pages].[cmps].effect':null
+    },
+    sources:{
+        '[pages].[cmps].style':'~:list.elements.css',
+        '[pages].[cmps].text':'~:list.elements.content',
+        '[pages].[cmps].animations':'~:list.elements.properties.anim',
+        '[pages].[cmps].file.key':'~:list.elements.properties.src',
+        '[pages].[cmps].cmpType':'~:list.elements.type'
+    }
+}
+
+//buildInstance(model);
 
 function buildInstance(model){
     var shit={};
-    for(var key in model){
-        shit = _.extend(shit,buildElement(key,model[key]));
+    _sources = model.sources
+    if(!_sources){
+        return
+    }
+    for(var key in _sources){
+        //shit = _.extend(shit,buildElement(key,model[key]));
+        console.log(JSON.stringify(buildElement(key,_sources[key])));
     }
     return shit;
 }
@@ -136,35 +172,11 @@ function buildElement(eleKey,eleVal){
     return buildNodes(keys,eleVal);
 }
 
-var model ={
-    '[pages].col': null,
-    '[pages].in': null,
-    '[pages].out': null,
-    '[pages].bgcol': null,
-    '[pages].bgimage': null,
-    '[pages].bgleft': null,
-    '[pages].bgtop': null,
-    '[pages].[cmps].style':'~:list.elements.css',
-    '[pages].[cmps].text':'~:list.elements.content',
-    '[pages].[cmps].animations':'~:list.elements.properties.anim',
-    '[pages].[cmps].link':null,
-    '[pages].[cmps].textType':null,
-    '[pages].[cmps].imageLink':null,
-    '[pages].[cmps].mask':false,
-    //'[pages].[cmps].remark':{},
-    '[pages].[cmps].remark.key':null,
-    '[pages].[cmps].remark.name':null,
-    //'[pages].[cmps].file':{}
-    '[pages].[cmps].file.key':'~:list.elements.properties.src',
-    '[pages].[cmps].file.server':'Q',
-    '[pages].[cmps].effect':null,
-    '[pages].[cmps].cmpType':'~:list.elements.type'
-}
-
 function buildNodes(nodes,value){
     var tree,seed;
     seed = value;
     tree = water(nodes,seed);
+    return tree
 };
 
 /*
@@ -257,7 +269,7 @@ function _grow(childNode,parentNode,tree){
         }
         return _fruit
     }else{
-
+        console.log('------------------------');
     }
 }
 
@@ -315,6 +327,9 @@ function discover(key,keyContainer){
     return done(elemts,keyContainer,sources);
 };
 
+/*
+    function done
+ * */
 function done(elemts,key,datas){
     var root = elemts.length;
     if(root<1){
@@ -342,7 +357,7 @@ function done(elemts,key,datas){
         return aa
     }
 }
-
+console.log(JSON.stringify(done(['list','elements','sceneId'],'_id',sources)))
 //console.log(aa('list.elements.css',data1));
 //console.log(JSON.stringify(aa('list.elements.sceneId',data1)));
 //console.log(JSON.stringify(_.indexBy(aa('list.elements.sceneId',data1))));
