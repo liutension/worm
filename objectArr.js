@@ -113,10 +113,17 @@ var pages=[
     }
 ]
 
+test = function(value){
+    return function(arg){
+        var aaa = value;
+        return [arg,value]
+    }
+}
+
 //rabbitpre model v2
 var model ={
     default:{
-        '[pages].col': null,
+       '[pages].col': null,
         '[pages].in': null,
         '[pages].out': null,
         '[pages].bgcol': null,
@@ -134,27 +141,30 @@ var model ={
         '[pages].[cmps].file.server':'Q',
         '[pages].[cmps].effect':null
     },
-    sources:{
-/**/    '[pages].[cmps].style':'~:list.elements.css',
-        '[pages].[cmps].text':'~:list.elements.content',
-        '[pages].[cmps].animations':{value:'~:list.elements.properties.anim','formatter':function(value){if(value){return value[0]}return value;}},
-        '[pages].[cmps].file.key':'~:list.elements.properties.src',
-        '[pages].[cmps].cmpType':{'value':'~:list.elements.type','formatter':function(value){return value}}
-    }
+    sources:[
+        {'[pages].[cmps].style':'~:list.elements.css'},
+        {'[pages].[cmps].text':'~:list.elements.content'},
+        {'[pages].[cmps].animations':{'value':'~:list.elements.properties.anim','formatter':function(value){if(value){return value[0]}return value;}}},
+        {'[pages].[cmps].file.key':'~:list.elements.properties.src'},
+        {'[pages].[cmps].cmpType':{'value':'~:list.elements.type','formatter':function(value){return value}}}
+    ]
 }
 
 //main
 function buildInstance(model){
     _sources = model.sources
     _defaults = model.default
-    if(!_sources){
-        return
+    if(!_sources || !_.isArray(_sources)){
+        return console.log("[ERROR]:sources must be Array.")
     }
     var elements=[];
-    for(var key in _sources){
-        var element = buildElement(key,_sources[key]);
-        elements.push(element);
-        //console.log(JSON.stringify(element));
+    for(var i=0;i<_sources.length ;i++){
+        var source = _sources[i];
+        for(var key in source){
+            var element = buildElement(key,source[key]);
+            elements.push(element);
+            //console.log(JSON.stringify(element));
+        }
     }
     //合并所有元素
     var instance = mergeElements(elements);
@@ -184,7 +194,19 @@ function merge(master,branch){
     }else if(_.isObject(master)){
         for(var key in branch){
             if(_.has(master,key)){
-                master[key] = merge(master[key],branch[key])
+                // 拦截,源数据中多属性格式化合并
+                var isMasterFunction = (typeof(master[key]) === 'function')
+                var isBranchFunction = (typeof(branch[key]) === 'function')
+                if(isMasterFunction && isBranchFunction){
+                    //待扩展 拦截堆
+                }else if(isMasterFunction || isBranchFunction){
+                    //拦截链
+                    var func = isMasterFunction?master[key]:branch[key];
+                    var args = isMasterFunction?branch[key]:master[key];
+                    master[key] = func(args);
+                }else{
+                    master[key] = merge(master[key],branch[key])
+                }
             }else{
                 master[key] = branch[key];
             }
