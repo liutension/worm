@@ -1,9 +1,27 @@
 {
-  "name": "Worm",
+  "name": "rabbitpre-tension-worm",
   "version": "0.0.1",
   "private": false,
   "dependencies": {
     "underscore": "^1.8.3"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "description": "Worm",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liutension/worm.git"
+  },
+  "keywords": [
+    "worm"
+  ],
+  "author": "tensionliu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liutension/worm/issues"
+  },
+  "homepage": "https://github.com/liutension/worm"
 }
