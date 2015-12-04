@@ -4,9 +4,13 @@
 var Worm = require('./').Worm;
 
 var model ={
-    default:{/*
-        '[pages].bgimage':null
-        '[pages].col': null,
+    default:{
+        '[pages].bgimage':null,
+        '[pages].bgimage':function(value){
+            if(!value){return 'hahah'};
+            return value
+        }
+     /*'[pages].col': null,
         '[pages].in': null,
         '[pages].out': null,
         '[pages].bgcol': null,
@@ -24,7 +28,7 @@ var model ={
         '[pages].[cmps].effect':null*/
     },
     sources:[
-        /*{'[pages].bgimage':'~:list.elements'}
+        {'[pages].[cmps].text':'~:list.elements.content'}/*
         {'[pages].[cmps].style':'~:list.elements.css'},
         {'[pages].[cmps].text':'~:list.elements.content'},
         {'[pages].[cmps].animations':{'value':'~:list.elements.properties.anim','formatter':function(value){if(value){return value[0]}return value;}}},
