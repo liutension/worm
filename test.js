@@ -4,12 +4,12 @@
 var Worm = require('./').Worm;
 
 var model ={
-    default:{
+    default:{/*
+        '[pages].bgimage':null
         '[pages].col': null,
         '[pages].in': null,
         '[pages].out': null,
         '[pages].bgcol': null,
-        '[pages].bgimage': null,
         '[pages].bgleft': null,
         '[pages].bgtop': null,
         '[pages].[cmps].link':null,
@@ -21,14 +21,15 @@ var model ={
         '[pages].[cmps].remark.name':null,
         //'[pages].[cmps].file':{}
         '[pages].[cmps].file.server':'Q',
-        '[pages].[cmps].effect':null
+        '[pages].[cmps].effect':null*/
     },
     sources:[
+        /*{'[pages].bgimage':'~:list.elements'}
         {'[pages].[cmps].style':'~:list.elements.css'},
         {'[pages].[cmps].text':'~:list.elements.content'},
         {'[pages].[cmps].animations':{'value':'~:list.elements.properties.anim','formatter':function(value){if(value){return value[0]}return value;}}},
         {'[pages].[cmps].file.key':'~:list.elements.properties.src'},
-        {'[pages].[cmps].cmpType':{'value':'~:list.elements.type','formatter':function(value){return value}}}
+        {'[pages].[cmps].cmpType':{'value':'~:list.elements.type','formatter':function(value){return value}}}*/
     ]
 }
 
