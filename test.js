@@ -3,14 +3,57 @@
  */
 var Worm = require('./').Worm;
 
+var model1 = {
+    default:{'[pages].[cmps]':function(cmps){
+        if(!cmps){return cmps}
+        var length =cmps.length
+        var indexs = []
+        for(var i = 0;i<length;i++){
+            var cmp = cmps[i]
+            if(!cmp || cmp.cmpType.toString() === '3') {
+                indexs.push(i)
+            }
+        }
+        for(var i = 0;i<indexs.length;i++){
+            cmps.splice(indexs[i],1)
+        }
+        return cmps
+    },
+        '[pages].col': null,
+            '[pages].in': 0,
+            '[pages].out': 0,
+            '[pages].bgcol': null,
+            '[pages].bgimage': null,
+            '[pages].bgleft': 0,
+            '[pages].bgtop': 0,
+            '[pages].bgserver': 'Q',
+            '[pages].[cmps].link':null,
+            '[pages].[cmps].textType':null,
+            '[pages].[cmps].imageLink':null,
+            '[pages].[cmps].mask':false,
+            //'[pages].[cmps].remark':{},
+            '[pages].[cmps].remark.key':null,
+            '[pages].[cmps].remark.name':null,
+            //'[pages].[cmps].file':{}
+            '[pages].[cmps].file.server':'Q',
+            '[pages].[cmps].effect':null
+    },
+        sources:[
+            {'[pages].bgimage':{'value':'~:list.elements'}},
+            {'[pages].[cmps].style':{'value':'~:list.elements.css'}},
+            {'[pages].[cmps].style':{'value':'~:list.elements.type'}},
+            {'[pages].[cmps].style':{'value':'~:list.elements.content'}},
+            {'[pages].[cmps].text':'~:list.elements.content'},
+            {'[pages].[cmps].animations':{'value':'~:list.elements.properties.anim'}},
+            {'[pages].[cmps].file.key':{'value':'~:list.elements.properties.src'}},
+            {'[pages].[cmps].cmpType':{'value':'~:list.elements.type'}},
+        ]
+    }
+
 var model ={
     default:{
         '[pages].bgimage':null,
-        '[pages].bgimage':function(value){
-            if(!value){return 'hahah'};
-            return value
-        }
-     /*'[pages].col': null,
+        '[pages].col': null,
         '[pages].in': null,
         '[pages].out': null,
         '[pages].bgcol': null,
@@ -25,15 +68,15 @@ var model ={
         '[pages].[cmps].remark.name':null,
         //'[pages].[cmps].file':{}
         '[pages].[cmps].file.server':'Q',
-        '[pages].[cmps].effect':null*/
+        '[pages].[cmps].effect':null
     },
     sources:[
-        {'[pages].[cmps].text':'~:list.elements.content'}/*
+        {'[pages].[cmps].text':'~:list.elements.content'},
         {'[pages].[cmps].style':'~:list.elements.css'},
         {'[pages].[cmps].text':'~:list.elements.content'},
         {'[pages].[cmps].animations':{'value':'~:list.elements.properties.anim','formatter':function(value){if(value){return value[0]}return value;}}},
         {'[pages].[cmps].file.key':'~:list.elements.properties.src'},
-        {'[pages].[cmps].cmpType':{'value':'~:list.elements.type','formatter':function(value){return value}}}*/
+        {'[pages].[cmps].cmpType':{'value':'~:list.elements.type','formatter':function(value){return value}}}
     ]
 }
 
@@ -166,8 +209,8 @@ var data2={"list":[
     }
 ]};
 
-var worm = new Worm(model,data1);
+var worm = new Worm(model1,data1);
 console.log(JSON.stringify(worm.build()));
 console.log('++++++++++++++');
 worm.setSource(data2);
-console.log(JSON.stringify(worm.build()));
+//console.log(JSON.stringify(worm.build()));
