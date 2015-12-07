@@ -19,7 +19,7 @@ var model1 = {
         }
         return cmps
     },
-        '[pages].col': null,
+            '[pages].col': function(value,index){return index--;},
             '[pages].in': 0,
             '[pages].out': 0,
             '[pages].bgcol': null,
