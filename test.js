@@ -213,4 +213,4 @@ var worm = new Worm(model,data1);
 console.log(JSON.stringify(worm.build()));
 console.log('++++++++++++++');
 worm.setSource(data2);
-//console.log(JSON.stringify(worm.build()));
+console.log(JSON.stringify(worm.build()));
