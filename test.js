@@ -74,7 +74,7 @@ var model ={
         {'[pages].[cmps].text':'~:list.elements.content'},
         {'[pages].[cmps].style':'~:list.elements.css'},
         {'[pages].[cmps].text':'~:list.elements.content'},
-        {'[pages].[cmps].animations':{'value':'~:list.elements.properties.anim','formatter':function(value){if(value){return value[0]}return value;}}},
+        {'[pages].[cmps].animations':{'value':'~:list.elements.properties.anim','formatter':function(value,index){console.log(index);if(value){return value[0]}return value;}}},
         {'[pages].[cmps].file.key':'~:list.elements.properties.src'},
         {'[pages].[cmps].cmpType':{'value':'~:list.elements.type','formatter':function(value){return value}}}
     ]
@@ -209,7 +209,7 @@ var data2={"list":[
     }
 ]};
 
-var worm = new Worm(model1,data1);
+var worm = new Worm(model,data1);
 console.log(JSON.stringify(worm.build()));
 console.log('++++++++++++++');
 worm.setSource(data2);

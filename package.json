@@ -1,6 +1,6 @@
 {
   "name": "rabbitpre-tension-worm",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": false,
   "dependencies": {
     "underscore": "^1.8.3"
